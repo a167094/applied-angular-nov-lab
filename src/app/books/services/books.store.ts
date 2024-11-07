@@ -1,4 +1,4 @@
-import { inject } from '@angular/core';
+import { inject, signal } from '@angular/core';
 import {
   patchState,
   signalStore,
@@ -10,16 +10,20 @@ import { BooksService } from './books.service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
-import { withDevtools } from '@angular-architects/ngrx-toolkit';
+import { updateState, withDevtools } from '@angular-architects/ngrx-toolkit';
 
 interface BooksState {
-  prefs: string;
+  prefs: number;
   books: Books[];
+  currentPage: number;
+  totalPages: number;
 }
 
 const initialState: BooksState = {
-  prefs: '',
+  prefs: 10,
   books: [],
+  currentPage: 1,
+  totalPages: 1,
 };
 
 export const BooksStore = signalStore(
@@ -35,6 +39,9 @@ export const BooksStore = signalStore(
               tapResponse({
                 next(value) {
                   patchState(store, { books: value });
+                  patchState(store, {
+                    totalPages: store.books().length / store.prefs(),
+                  });
                 },
                 error(err) {
                   console.log(err);
@@ -44,6 +51,16 @@ export const BooksStore = signalStore(
           ),
         ),
       ),
+      setPrefs: (prefs: number) =>
+        patchState(store, {
+          prefs,
+          totalPages: store.books().length / prefs,
+          currentPage: 1,
+        }),
+      pageForward: (increase: number) =>
+        patchState(store, { currentPage: store.currentPage() + increase }),
+      pageBack: (decrease: number) =>
+        patchState(store, { currentPage: store.currentPage() - decrease }),
     };
   }),
   withHooks({
