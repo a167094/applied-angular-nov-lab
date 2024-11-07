@@ -1,21 +1,18 @@
-import { JsonPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { RouterLink, RouterOutlet } from '@angular/router';
 import { BookListComponent } from './components/book-list.component';
-import { BooksService } from './services/books.service';
+import { BooksStore } from './services/books.store';
 
 @Component({
   selector: 'app-books',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, JsonPipe, BookListComponent],
+  imports: [BookListComponent],
   template: ` <p>Books</p>
     <app-book-list [books]="books()" />`,
   styles: ``,
 })
 export class BooksComponent {
-  private service = inject(BooksService);
+  private service = inject(BooksStore);
 
-  books = toSignal(this.service.getBooks());
+  books = this.service.books;
 }

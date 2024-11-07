@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import { Books } from '../services/books.store';
 
 @Component({
   selector: 'app-book-list',
@@ -36,7 +37,5 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
   styles: ``,
 })
 export class BookListComponent {
-  books = input.required<
-    { id: string; title: string; author: string; year: number }[] | undefined
-  >();
+  books = input.required<Books[] | undefined>();
 }
