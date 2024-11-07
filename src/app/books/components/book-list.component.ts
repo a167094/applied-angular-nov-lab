@@ -19,6 +19,7 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
       <tbody>
         @for (book of books(); track book.id) {
           <tr class="hover">
+            <td></td>
             <td>
               {{ book.id }}
             </td>

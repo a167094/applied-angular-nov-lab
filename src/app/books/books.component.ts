@@ -1,10 +1,9 @@
 import { JsonPipe } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { map } from 'rxjs';
 import { BookListComponent } from './components/book-list.component';
+import { BooksService } from './services/books.service';
 
 @Component({
   selector: 'app-books',
@@ -16,13 +15,7 @@ import { BookListComponent } from './components/book-list.component';
   styles: ``,
 })
 export class BooksComponent {
-  private client = inject(HttpClient);
+  private service = inject(BooksService);
 
-  books = toSignal(
-    this.client
-      .get<{
-        data: { id: string; title: string; author: string; year: number }[];
-      }>('/api/books')
-      .pipe(map((res) => res.data)),
-  );
+  books = toSignal(this.service.getBooks());
 }
